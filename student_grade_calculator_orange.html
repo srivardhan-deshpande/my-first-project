@@ -1,0 +1,313 @@
+
+<h2 class="sr-only">Student Grade Calculator with orange and warm theme background</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --warm-bg:#FFF8F0;
+  --warm-bg2:#FFF0E0;
+  --warm-card:#FFFFFF;
+  --warm-orange:#E8650A;
+  --warm-orange2:#F28C28;
+  --warm-orange-light:#FDE8D0;
+  --warm-orange-pale:#FEF3E8;
+  --warm-red:#C0392B;
+  --warm-green:#27AE60;
+  --warm-text:#3D1F00;
+  --warm-muted:#A0633A;
+  --warm-border:#F2C49B;
+  --warm-border2:#E8A870;
+}
+.app{padding:1rem 0;max-width:680px;background:var(--warm-bg);border-radius:16px;padding:1.5rem}
+.app-title{font-size:20px;font-weight:500;color:var(--warm-text);margin-bottom:4px}
+.app-sub{font-size:13px;color:var(--warm-muted);margin-bottom:1.25rem}
+.tabs{display:flex;gap:6px;margin-bottom:1.5rem;flex-wrap:wrap}
+.tab{padding:8px 15px;border-radius:20px;border:1.5px solid var(--warm-border);background:var(--warm-card);cursor:pointer;font-size:13px;color:var(--warm-muted);transition:all 0.15s;font-weight:400}
+.tab.active{background:var(--warm-orange);color:#fff;border-color:var(--warm-orange);font-weight:500}
+.tab:hover:not(.active){background:var(--warm-orange-pale);border-color:var(--warm-orange2)}
+.section{display:none}
+.section.active{display:block}
+.card{background:var(--warm-card);border:1.5px solid var(--warm-border);border-radius:14px;padding:1.25rem;margin-bottom:1rem}
+.row{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.row label{font-size:13px;color:var(--warm-muted);min-width:130px}
+.row input{flex:1;border:1.5px solid var(--warm-border);border-radius:8px;padding:8px 12px;font-size:13px;background:var(--warm-bg);color:var(--warm-text);outline:none}
+.row input:focus{border-color:var(--warm-orange);background:#fff}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1rem}
+.metrics-2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:1rem}
+.metrics-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1rem}
+.metric{background:var(--warm-orange-pale);border:1.5px solid var(--warm-border);border-radius:12px;padding:1rem;text-align:center}
+.metric .val{font-size:24px;font-weight:500;color:var(--warm-orange)}
+.metric .lbl{font-size:12px;color:var(--warm-muted);margin-top:4px}
+.hdr{display:grid;grid-template-columns:1fr 72px 72px 72px 36px;gap:8px;margin-bottom:6px}
+.hdr span{font-size:12px;color:var(--warm-muted);text-align:center}
+.hdr span:first-child{text-align:left}
+.srow{display:grid;grid-template-columns:1fr 72px 72px 72px 36px;gap:8px;align-items:center;margin-bottom:7px}
+.srow input,.sgrow input{font-size:13px;text-align:center;border:1.5px solid var(--warm-border);border-radius:8px;padding:6px 8px;background:var(--warm-bg);color:var(--warm-text);outline:none}
+.srow input:focus,.sgrow input:focus{border-color:var(--warm-orange);background:#fff}
+.srow input[type=text]{text-align:left}
+.gcell{font-size:13px;font-weight:500;text-align:center;color:var(--warm-muted)}
+.add-btn{font-size:13px;color:var(--warm-orange);background:none;border:none;cursor:pointer;padding:4px 0;font-weight:500}
+.calc-btn{width:100%;padding:11px;background:var(--warm-orange);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;margin-top:8px;transition:opacity 0.15s}
+.calc-btn:hover{opacity:0.88}
+.divider{border:none;border-top:1.5px solid var(--warm-border);margin:1rem 0}
+.status-ok{font-size:13px;font-weight:500;color:var(--warm-green)}
+.status-fail{font-size:13px;font-weight:500;color:var(--warm-red)}
+.badge{display:inline-block;padding:3px 14px;border-radius:20px;font-size:13px;font-weight:500;margin-top:6px}
+.badge-pass{background:#E8F8EF;color:var(--warm-green);border:1px solid #A8DDB8}
+.badge-fail{background:#FDECEA;color:var(--warm-red);border:1px solid #F5B7B1}
+.info-box{background:var(--warm-orange-light);border:1.5px solid var(--warm-border);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--warm-muted);margin-bottom:1rem}
+.rm-btn{background:none;border:none;color:var(--warm-border2);cursor:pointer;font-size:15px;padding:2px 4px}
+.rm-btn:hover{color:var(--warm-red)}
+.sgpa-formula{background:var(--warm-orange-pale);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--warm-muted);margin-bottom:12px;border-left:3px solid var(--warm-orange2)}
+.breakdown{background:var(--warm-bg2);border-radius:10px;padding:10px;font-size:12px;border:1px solid var(--warm-border)}
+.sgrow{display:grid;grid-template-columns:1fr 60px 72px 72px 36px;gap:8px;align-items:center;margin-bottom:7px}
+</style>
+
+<div class="app">
+  <div class="app-title"><i class="ti ti-school" aria-hidden="true" style="font-size:20px;margin-right:6px;color:var(--warm-orange)"></i>Student grade calculator</div>
+  <div class="app-sub">Calculate your percentage, grade, SGPA and CGPA instantly</div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('basic',this)"><i class="ti ti-calculator" aria-hidden="true"></i> Basic</button>
+    <button class="tab" onclick="showTab('multi',this)"><i class="ti ti-list-check" aria-hidden="true"></i> Multi-subject</button>
+    <button class="tab" onclick="showTab('sgpa',this)"><i class="ti ti-chart-line" aria-hidden="true"></i> SGPA</button>
+    <button class="tab" onclick="showTab('cgpa',this)"><i class="ti ti-chart-bar" aria-hidden="true"></i> CGPA</button>
+  </div>
+
+  <!-- BASIC -->
+  <div class="section active" id="tab-basic">
+    <div class="card">
+      <div class="row"><label>Student name</label><input type="text" id="b-name" placeholder="e.g. Srivardhan"/></div>
+      <div class="row"><label>Marks obtained</label><input type="number" id="b-marks" placeholder="e.g. 78" min="0" oninput="calcBasic()"/></div>
+      <div class="row"><label>Total marks</label><input type="number" id="b-total" placeholder="e.g. 100" min="1" value="100" oninput="calcBasic()"/></div>
+    </div>
+    <div id="b-out" style="display:none">
+      <div class="metrics">
+        <div class="metric"><div class="val" id="b-pct">—</div><div class="lbl">Percentage</div></div>
+        <div class="metric"><div class="val" id="b-grade">—</div><div class="lbl">Grade</div><div id="b-badge"></div></div>
+        <div class="metric"><div class="val" id="b-gpa">—</div><div class="lbl">GPA (10 scale)</div></div>
+      </div>
+      <div id="b-remark" style="font-size:13px;color:var(--warm-muted)"></div>
+    </div>
+  </div>
+
+  <!-- MULTI-SUBJECT -->
+  <div class="section" id="tab-multi">
+    <div class="card">
+      <div class="hdr"><span>Subject</span><span>Max</span><span>Marks</span><span>Grade</span><span></span></div>
+      <div id="multi-list"></div>
+      <button class="add-btn" onclick="addSubject()"><i class="ti ti-plus" aria-hidden="true"></i> Add subject</button>
+    </div>
+    <button class="calc-btn" onclick="calcMulti()">Calculate results</button>
+    <div id="multi-out" style="display:none">
+      <hr class="divider"/>
+      <div class="metrics">
+        <div class="metric"><div class="val" id="m-total">—</div><div class="lbl">Total marks</div></div>
+        <div class="metric"><div class="val" id="m-pct">—</div><div class="lbl">Percentage</div></div>
+        <div class="metric"><div class="val" id="m-sgpa">—</div><div class="lbl">SGPA</div></div>
+      </div>
+      <div id="m-status"></div>
+    </div>
+  </div>
+
+  <!-- SGPA -->
+  <div class="section" id="tab-sgpa">
+    <div class="info-box"><i class="ti ti-info-circle" aria-hidden="true"></i> Credit-weighted SGPA — enter credits (3–4) and marks for each subject.</div>
+    <div class="sgpa-formula">Formula: SGPA = (Sum of Credit × Grade Points) ÷ Total Credits &nbsp;|&nbsp; O=10, A+=9, A=8, B+=7, B=6, C=5, F=0</div>
+    <div class="card">
+      <div style="display:grid;grid-template-columns:1fr 60px 72px 72px 36px;gap:8px;margin-bottom:6px">
+        <span style="font-size:12px;color:var(--warm-muted)">Subject</span>
+        <span style="font-size:12px;color:var(--warm-muted);text-align:center">Credits</span>
+        <span style="font-size:12px;color:var(--warm-muted);text-align:center">Max</span>
+        <span style="font-size:12px;color:var(--warm-muted);text-align:center">Marks</span>
+        <span></span>
+      </div>
+      <div id="sgpa-list"></div>
+      <button class="add-btn" onclick="addSgpaSubject()"><i class="ti ti-plus" aria-hidden="true"></i> Add subject</button>
+    </div>
+    <button class="calc-btn" onclick="calcSGPA()">Calculate SGPA</button>
+    <div id="sgpa-out" style="display:none">
+      <hr class="divider"/>
+      <div class="metrics-4">
+        <div class="metric"><div class="val" id="sg-sgpa">—</div><div class="lbl">SGPA</div></div>
+        <div class="metric"><div class="val" id="sg-pct">—</div><div class="lbl">Percentage</div></div>
+        <div class="metric"><div class="val" id="sg-credits">—</div><div class="lbl">Total credits</div></div>
+        <div class="metric"><div class="val" id="sg-grade">—</div><div class="lbl">Grade</div></div>
+      </div>
+      <div id="sg-breakdown" style="margin-top:8px"></div>
+      <div id="sg-status" style="margin-top:10px"></div>
+    </div>
+  </div>
+
+  <!-- CGPA -->
+  <div class="section" id="tab-cgpa">
+    <div class="card">
+      <p style="font-size:13px;color:var(--warm-muted);margin-bottom:12px">Enter SGPA for each completed semester</p>
+      <div style="display:grid;grid-template-columns:1fr 110px 32px;gap:8px;margin-bottom:8px">
+        <span style="font-size:12px;color:var(--warm-muted)">Semester</span>
+        <span style="font-size:12px;color:var(--warm-muted);text-align:center">SGPA</span>
+        <span></span>
+      </div>
+      <div id="cgpa-list"></div>
+      <button class="add-btn" onclick="addSem()"><i class="ti ti-plus" aria-hidden="true"></i> Add semester</button>
+    </div>
+    <button class="calc-btn" onclick="calcCGPA()">Calculate CGPA</button>
+    <div id="cgpa-out" style="display:none">
+      <hr class="divider"/>
+      <div class="metrics-2">
+        <div class="metric"><div class="val" id="cg-val">—</div><div class="lbl">CGPA</div></div>
+        <div class="metric"><div class="val" id="cg-pct">—</div><div class="lbl">Equivalent %</div></div>
+      </div>
+      <div id="cg-grade" style="font-size:13px;color:var(--warm-muted);margin-top:4px"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function getGrade(pct){
+  if(pct>=90)return{g:'O',gp:10,label:'Outstanding'};
+  if(pct>=80)return{g:'A+',gp:9,label:'Excellent'};
+  if(pct>=70)return{g:'A',gp:8,label:'Very Good'};
+  if(pct>=60)return{g:'B+',gp:7,label:'Good'};
+  if(pct>=50)return{g:'B',gp:6,label:'Average'};
+  if(pct>=40)return{g:'C',gp:5,label:'Pass'};
+  return{g:'F',gp:0,label:'Fail'};
+}
+function showTab(t,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  btn.classList.add('active');
+}
+function calcBasic(){
+  const m=parseFloat(document.getElementById('b-marks').value);
+  const tot=parseFloat(document.getElementById('b-total').value);
+  const out=document.getElementById('b-out');
+  if(isNaN(m)||isNaN(tot)||tot<=0){out.style.display='none';return;}
+  const pct=(m/tot)*100,info=getGrade(pct);
+  out.style.display='block';
+  document.getElementById('b-pct').textContent=pct.toFixed(1)+'%';
+  document.getElementById('b-grade').textContent=info.g;
+  document.getElementById('b-gpa').textContent=info.gp+'.0';
+  document.getElementById('b-badge').innerHTML=`<span class="badge ${info.g==='F'?'badge-fail':'badge-pass'}">${info.label}</span>`;
+  document.getElementById('b-remark').textContent=info.g==='F'?'Need 40% to pass. Keep studying hard!':'Great work, keep it up!';
+}
+let subjects=[
+  {name:'Mathematics',max:100,marks:''},
+  {name:'Physics',max:100,marks:''},
+  {name:'Chemistry',max:100,marks:''},
+  {name:'English',max:100,marks:''},
+];
+function renderSubjects(){
+  document.getElementById('multi-list').innerHTML=subjects.map((s,i)=>`
+    <div class="srow">
+      <input type="text" value="${s.name}" placeholder="Subject" oninput="subjects[${i}].name=this.value" style="text-align:left"/>
+      <input type="number" value="${s.max}" min="1" oninput="subjects[${i}].max=+this.value"/>
+      <input type="number" value="${s.marks}" min="0" placeholder="0" oninput="subjects[${i}].marks=+this.value"/>
+      <div class="gcell" id="mg-${i}">—</div>
+      <button class="rm-btn" onclick="removeSubject(${i})"><i class="ti ti-x" aria-hidden="true"></i></button>
+    </div>`).join('');
+}
+function addSubject(){subjects.push({name:'',max:100,marks:''});renderSubjects();}
+function removeSubject(i){if(subjects.length>1){subjects.splice(i,1);renderSubjects();}}
+function calcMulti(){
+  let tMax=0,tGot=0,failed=[];
+  subjects.forEach((s,i)=>{
+    const m=parseFloat(s.marks)||0,mx=parseFloat(s.max)||100;
+    tMax+=mx;tGot+=m;
+    const pct=(m/mx)*100,info=getGrade(pct);
+    const el=document.getElementById('mg-'+i);
+    if(el){el.textContent=info.g;el.style.color=info.g==='F'?'#C0392B':'#27AE60';}
+    if(info.g==='F')failed.push(s.name||'Subject '+(i+1));
+  });
+  const pct=(tGot/tMax)*100,info=getGrade(pct);
+  document.getElementById('multi-out').style.display='block';
+  document.getElementById('m-total').textContent=tGot+'/'+tMax;
+  document.getElementById('m-pct').textContent=pct.toFixed(1)+'%';
+  document.getElementById('m-sgpa').textContent=((tGot/tMax)*10).toFixed(2);
+  const st=document.getElementById('m-status');
+  st.className=failed.length>0?'status-fail':'status-ok';
+  st.textContent=failed.length>0?'Failed in: '+failed.join(', '):'Result: PASS — Grade: '+info.g+' ('+info.label+')';
+}
+let sgpaSubjects=[
+  {name:'Mathematics',credits:4,max:100,marks:''},
+  {name:'Physics',credits:3,max:100,marks:''},
+  {name:'Chemistry',credits:3,max:100,marks:''},
+  {name:'English',credits:2,max:100,marks:''},
+  {name:'Programming Lab',credits:2,max:100,marks:''},
+];
+function renderSgpaSubjects(){
+  document.getElementById('sgpa-list').innerHTML=sgpaSubjects.map((s,i)=>`
+    <div class="sgrow">
+      <input type="text" value="${s.name}" placeholder="Subject" oninput="sgpaSubjects[${i}].name=this.value" style="text-align:left"/>
+      <input type="number" value="${s.credits}" min="1" max="6" oninput="sgpaSubjects[${i}].credits=+this.value"/>
+      <input type="number" value="${s.max}" min="1" oninput="sgpaSubjects[${i}].max=+this.value"/>
+      <input type="number" value="${s.marks}" min="0" placeholder="0" oninput="sgpaSubjects[${i}].marks=+this.value"/>
+      <button class="rm-btn" onclick="removeSgpaSub(${i})"><i class="ti ti-x" aria-hidden="true"></i></button>
+    </div>`).join('');
+}
+function addSgpaSubject(){sgpaSubjects.push({name:'',credits:3,max:100,marks:''});renderSgpaSubjects();}
+function removeSgpaSub(i){if(sgpaSubjects.length>1){sgpaSubjects.splice(i,1);renderSgpaSubjects();}}
+function calcSGPA(){
+  let totalCredits=0,weightedGP=0,failed=[];
+  const rows=sgpaSubjects.map(s=>{
+    const m=parseFloat(s.marks)||0,mx=parseFloat(s.max)||100,cr=parseFloat(s.credits)||3;
+    const pct=(m/mx)*100,info=getGrade(pct);
+    totalCredits+=cr;weightedGP+=cr*info.gp;
+    if(info.g==='F')failed.push(s.name||'Subject');
+    return{name:s.name,credits:cr,marks:m,max:mx,grade:info.g,gp:info.gp};
+  });
+  const sgpa=totalCredits>0?(weightedGP/totalCredits):0;
+  const pct=(sgpa-0.75)*10;
+  const info=getGrade(Math.max(0,pct));
+  document.getElementById('sgpa-out').style.display='block';
+  document.getElementById('sg-sgpa').textContent=sgpa.toFixed(2);
+  document.getElementById('sg-pct').textContent=Math.max(0,pct).toFixed(1)+'%';
+  document.getElementById('sg-credits').textContent=totalCredits;
+  document.getElementById('sg-grade').textContent=info.g;
+  document.getElementById('sg-breakdown').innerHTML=`
+    <div class="breakdown">
+      <div style="display:grid;grid-template-columns:1fr 50px 60px 40px 50px;gap:6px;font-weight:500;color:var(--warm-muted);margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--warm-border)">
+        <span>Subject</span><span style="text-align:center">Cr</span><span style="text-align:center">Marks</span><span style="text-align:center">Grade</span><span style="text-align:center">Cr×GP</span>
+      </div>
+      ${rows.map(r=>`
+      <div style="display:grid;grid-template-columns:1fr 50px 60px 40px 50px;gap:6px;margin-bottom:5px;color:var(--warm-text)">
+        <span style="font-size:12px">${r.name||'—'}</span>
+        <span style="text-align:center;font-size:12px">${r.credits}</span>
+        <span style="text-align:center;font-size:12px">${r.marks}/${r.max}</span>
+        <span style="text-align:center;font-size:12px;font-weight:500;color:${r.grade==='F'?'#C0392B':'#27AE60'}">${r.grade}</span>
+        <span style="text-align:center;font-size:12px">${(r.credits*r.gp).toFixed(0)}</span>
+      </div>`).join('')}
+      <div style="border-top:1px solid var(--warm-border);margin-top:6px;padding-top:6px;display:grid;grid-template-columns:1fr 50px 60px 40px 50px;gap:6px;font-weight:500;color:var(--warm-orange)">
+        <span>Total</span><span style="text-align:center">${totalCredits}</span><span></span><span></span><span style="text-align:center">${weightedGP.toFixed(0)}</span>
+      </div>
+    </div>`;
+  const st=document.getElementById('sg-status');
+  st.className=failed.length>0?'status-fail':'status-ok';
+  st.textContent=failed.length>0?'Failed in: '+failed.join(', '):'Result: PASS — '+info.label;
+}
+let sems=[{name:'Semester 1',sgpa:''},{name:'Semester 2',sgpa:''}];
+function renderSems(){
+  document.getElementById('cgpa-list').innerHTML=sems.map((s,i)=>`
+    <div style="display:grid;grid-template-columns:1fr 110px 32px;gap:8px;margin-bottom:8px;align-items:center">
+      <input type="text" value="${s.name}" placeholder="Semester ${i+1}" style="font-size:13px;border:1.5px solid var(--warm-border);border-radius:8px;padding:7px 10px;background:var(--warm-bg);color:var(--warm-text);outline:none" oninput="sems[${i}].name=this.value"/>
+      <input type="number" value="${s.sgpa}" min="0" max="10" step="0.01" placeholder="e.g. 7.9" style="font-size:13px;text-align:center;border:1.5px solid var(--warm-border);border-radius:8px;padding:7px 8px;background:var(--warm-bg);color:var(--warm-text);outline:none" oninput="sems[${i}].sgpa=this.value"/>
+      <button class="rm-btn" onclick="removeSem(${i})"><i class="ti ti-x" aria-hidden="true"></i></button>
+    </div>`).join('');
+}
+function addSem(){sems.push({name:'Semester '+(sems.length+1),sgpa:''});renderSems();}
+function removeSem(i){if(sems.length>1){sems.splice(i,1);renderSems();}}
+function calcCGPA(){
+  const vals=sems.map(s=>parseFloat(s.sgpa)).filter(v=>!isNaN(v)&&v>=0);
+  if(vals.length===0)return;
+  const cgpa=vals.reduce((a,b)=>a+b,0)/vals.length;
+  const pct=(cgpa-0.75)*10;
+  const info=getGrade(Math.max(0,pct));
+  document.getElementById('cgpa-out').style.display='block';
+  document.getElementById('cg-val').textContent=cgpa.toFixed(2);
+  document.getElementById('cg-pct').textContent=Math.max(0,pct).toFixed(1)+'%';
+  document.getElementById('cg-grade').textContent='Classification: '+info.label+' (Grade '+info.g+') across '+vals.length+' semester'+(vals.length>1?'s':'');
+}
+renderSubjects();
+renderSgpaSubjects();
+renderSems();
+</script>
